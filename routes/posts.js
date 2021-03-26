@@ -1,18 +1,22 @@
 var express = require('express');
+var mongoose = require('mongoose');
 
 var router = express.Router();
 
-var Post = require('../models/Post.js')
+//Models
+var Post = require('../models/Post.js');
 
-/* GET users listing. */
+var db = mongoose.connection;
+
+/* GET posts listing ordered by publicationdate. */
 router.get('/', function (req, res) {
-  Post.find().sort('-publicationdate').exec(function(err, posts) {  
-    if (err) res.status(500).send(err);
-    else res.status(200).json(posts);
-  });
+    Post.find().sort('-publicationdate').exec(function(err, posts) {
+      if (err) res.status(500).send(err);
+      else res.status(200).json(posts);
+    });
 });
 
-/* GET all posts from an user by user Email --Pedir todo*/
+/* GET all posts from an user by user Email */
 router.get('/all/:email', function (req, res) {
   Post.find({'email':req.params.email}).sort('-publicationdate').exec(function (err, posts) {
       if (err) res.status(500).send(err);
@@ -20,7 +24,7 @@ router.get('/all/:email', function (req, res) {
     });
 });
 
-/* POST a new post --Publicar */
+/* POST a new post*/
 router.post('/', function (req, res) {
   Post.create(req.body, function (err, postinfo) {
     if (err) res.status(500).send(err);
@@ -28,7 +32,7 @@ router.post('/', function (req, res) {
   });
 });
 
-/* PUT an existing post --Actulizar*/
+/* PUT an existing post */
 router.put('/:id', function (req, res) {
   Post.findByIdAndUpdate(req.params.id, req.body, function (err, postinfo) {
     if (err) res.status(500).send(err);
@@ -36,7 +40,7 @@ router.put('/:id', function (req, res) {
   });
 });
 
-/* DELETE an existing post --Borrar*/
+/* DELETE an existing post */
 router.delete('/:id', function (req, res) {
   Post.findByIdAndDelete(req.params.id, function (err, postinfo) {
     if (err) res.status(500).send(err);
